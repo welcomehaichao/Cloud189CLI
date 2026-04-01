@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            suffix: ''
+            archive: tar.gz
+          - goos: linux
+            goarch: arm64
+            suffix: ''
+            archive: tar.gz
+          - goos: windows
+            goarch: amd64
+            suffix: '.exe'
+            archive: zip
+          - goos: darwin
+            goarch: amd64
+            suffix: ''
+            archive: tar.gz
+          - goos: darwin
+            goarch: arm64
+            suffix: ''
+            archive: tar.gz
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.3'
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          go build -ldflags="-s -w -X main.Version=${{ steps.get_version.outputs.VERSION }} -X 'main.BuildTime=$(date -u +%Y-%m-%d_%H:%M:%S)'" -o cloud189-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }} ./cmd/cloud189
+
+      - name: Package artifact (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        run: |
+          tar -czf cloud189-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.archive }} cloud189-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
+
+      - name: Package artifact (zip)
+        if: matrix.archive == 'zip'
+        run: |
+          zip cloud189-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.archive }} cloud189-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud189-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            cloud189-${{ matrix.goos }}-${{ matrix.goarch }}.${{ matrix.archive }}
+            cloud189-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          if [ -f CHANGELOG.md ]; then
+            # Extract changelog for this version
+            awk "/^## \[${VERSION}\]/{flag=1;next}/^## \[/{flag=0}flag" CHANGELOG.md > release_notes.md || echo "No changelog entry found for ${VERSION}" > release_notes.md
+          else
+            echo "No CHANGELOG.md found" > release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

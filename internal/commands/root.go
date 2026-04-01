@@ -16,7 +16,14 @@ var (
 	cfgManager   *config.Manager
 	outputFormat output.OutputFormat
 	auditLog     *logger.AuditLogger
+	version      string
+	buildTime    string
 )
+
+func SetVersionInfo(v, bt string) {
+	version = v
+	buildTime = bt
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "cloud189",
@@ -63,6 +70,17 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP((*string)(&outputFormat), "output", "o", "json", "输出格式 (json|yaml|table)")
+
+	var versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "显示版本信息",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("cloud189 CLI v%s\n", version)
+			fmt.Printf("Build Time: %s\n", buildTime)
+			fmt.Printf("Go Version: %s\n", "1.23.3")
+		},
+	}
+	rootCmd.AddCommand(versionCmd)
 }
 
 func printOutput(data interface{}, err error) {
