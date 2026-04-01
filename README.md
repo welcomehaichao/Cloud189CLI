@@ -10,6 +10,72 @@
 ✅ **家庭云支持**: 完整支持个人云和家庭云操作  
 ✅ **机器可读输出**: 支持 JSON/YAML 格式输出，便于 AI 解析  
 
+## 安装
+
+### 一键安装（推荐）
+
+#### Linux / macOS
+
+```bash
+# 使用 curl
+curl -sL https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189-install.sh | bash
+
+# 或使用 wget
+wget -qO- https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189-install.sh | bash
+```
+
+#### Windows (PowerShell)
+
+```powershell
+# 一键安装
+Invoke-WebRequest -Uri "https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189-install.ps1" | Invoke-Expression
+```
+
+### 手动下载
+
+从 [GitHub Releases](https://github.com/welcomehaichao/Cloud189CLI/releases) 下载对应平台的二进制文件：
+
+| 平台 | 架构 | 文件名 |
+|------|------|--------|
+| Linux | x64 | `cloud189-linux-amd64.tar.gz` |
+| Linux | ARM64 | `cloud189-linux-arm64.tar.gz` |
+| macOS | Intel | `cloud189-darwin-amd64.tar.gz` |
+| macOS | M1/M2 | `cloud189-darwin-arm64.tar.gz` |
+| Windows | x64 | `cloud189-windows-amd64.zip` |
+
+#### Linux / macOS 手动安装
+
+```bash
+# 下载
+wget https://github.com/welcomehaichao/Cloud189CLI/releases/download/v1.2.0/cloud189-linux-amd64.tar.gz
+
+# 解压
+tar -xzf cloud189-linux-amd64.tar.gz
+
+# 安装
+chmod +x cloud189-linux-amd64
+sudo mv cloud189-linux-amd64 /usr/local/bin/cloud189
+
+# 验证
+cloud189 version
+```
+
+#### Windows 手动安装
+
+```powershell
+# 下载
+Invoke-WebRequest -Uri "https://github.com/welcomehaichao/Cloud189CLI/releases/download/v1.2.0/cloud189-windows-amd64.zip" -OutFile "cloud189.zip"
+
+# 解压
+Expand-Archive -Path "cloud189.zip" -DestinationPath "C:\cloud189"
+
+# 添加到 PATH（可选）
+$env:PATH += ";C:\cloud189"
+
+# 验证
+C:\cloud189\cloud189.exe version
+```
+
 ## 快速开始
 
 ### 编译
