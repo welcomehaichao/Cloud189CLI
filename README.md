@@ -97,8 +97,54 @@ cloud189 info -o table          # 表格格式
 # 列出家庭云
 cloud189 family list
 
+# 切换家庭云
+cloud189 family use <家庭云ID>
+
 # 家庭云文件列表
 cloud189 ls / --family
+
+# 家庭云文件转存到个人云
+cloud189 family save <家庭云文件路径> <个人云路径>
+```
+
+### 文件分享
+
+```bash
+# 创建分享链接
+cloud189 share <文件路径>
+cloud189 share /文档/test.txt --expire 7d  # 7天有效期
+cloud189 share /文档/test.txt --code       # 生成提取码
+
+# 列出我的分享
+cloud189 share-list
+
+# 取消分享
+cloud189 share-cancel <分享ID>
+```
+
+### 获取下载链接
+
+```bash
+# 获取文件下载链接
+cloud189 get-url <文件路径>
+cloud189 get-url /文档/test.txt
+cloud189 get-url /视频/movie.mp4 --family
+```
+
+### 日志管理
+
+```bash
+# 查看最近日志
+cloud189 log view
+
+# 查看日志统计
+cloud189 log stats
+
+# 查看日志信息
+cloud189 log info
+
+# 清理过期日志
+cloud189 log clean
 ```
 
 ## 命令详解
@@ -242,9 +288,9 @@ Cloud189CLI/
 详细的功能清单请查看：**[功能清单.md](功能清单.md)**
 
 ### 当前进度
-- ✅ 已完成：21项功能
-- ⬜ 待实现：20项功能
-- 📊 完成率：51%
+- ✅ 已完成：40项功能
+- ⬜ 待实现：4项功能
+- 📊 完成率：91%
 
 ### 已完成核心功能
 - ✅ 文件删除 (`rm`)
@@ -252,11 +298,16 @@ Cloud189CLI/
 - ✅ 文件复制 (`cp`)
 - ✅ 文件重命名 (`rename`)
 - ✅ 文件下载 (`download`)
+- ✅ 文件分享 (`share`, `share-list`, `share-cancel`)
+- ✅ 家庭云切换 (`family use`)
+- ✅ 家庭云转存 (`family save`)
+- ✅ Session自动刷新
+- ✅ 配置加密存储
+- ✅ 日志审计系统
 
 ### 优先实现（P1级别）
-- [ ] 文件上传 (`upload`)
-- [ ] 上传下载进度显示
-- [ ] 家庭云转存
+- [ ] 回收站管理
+- [ ] 验证码自动识别
 
 完整功能清单和开发进度请查看 [功能清单.md](功能清单.md)。
 
