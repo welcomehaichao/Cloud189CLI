@@ -75,7 +75,7 @@ func init() {
 		Use:   "version",
 		Short: "显示版本信息",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("cloud189 CLI v%s\n", version)
+			fmt.Printf("cloud189 CLI %s\n", version)
 			fmt.Printf("Build Time: %s\n", buildTime)
 			fmt.Printf("Go Version: %s\n", "1.23.3")
 		},
