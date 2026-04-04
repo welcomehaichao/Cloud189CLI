@@ -85,6 +85,36 @@ $env:PATH += ";C:\cloud189"
 C:\cloud189\cloud189.exe version
 ```
 
+## 更新
+
+### 一键更新
+
+已安装用户可直接重新运行安装脚本覆盖更新：
+
+#### Linux / macOS
+
+```bash
+curl -sL https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189-install.sh | bash
+```
+
+#### Windows (PowerShell)
+
+```powershell
+iwr -useb https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189-install.ps1 | iex
+```
+
+### 查看当前版本
+
+```bash
+cloud189 version
+```
+
+### 更新提示
+
+- 安装脚本默认下载最新版本
+- 更新会自动覆盖旧版本，无需手动卸载
+- 更新后可能需要重启终端使PATH生效
+
 ## 快速开始
 
 ### 编译
