@@ -81,8 +81,36 @@ jobs:
             cloud189-install.sh
             cloud189-install.ps1
 
+  package-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Package skills
+        run: |
+          cd skills
+          for skill_dir in */; do
+            skill_name="${skill_dir%/}"
+            if [ -f "${skill_name}/SKILL.md" ]; then
+              zip -r "../${skill_name}.skill.zip" "${skill_name}" -x "*.git*"
+              echo "Packaged ${skill_name}.skill.zip"
+            fi
+          done
+
+      - name: Upload skills artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: skills
+          path: |
+            *.skill.zip
+
   release:
-    needs: build
+    needs: [build, package-skills]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
