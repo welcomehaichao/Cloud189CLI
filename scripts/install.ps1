@@ -63,7 +63,7 @@ function Download-Binary {
     
     # 下载文件
     try {
-        Invoke-WebRequest -Uri $Url -OutFile $ZipFile -UseBasicParsing
+        Invoke-WebRequest -Uri $Url -OutFile $ZipFile
         Write-Info "Download completed"
     } catch {
         Write-Error "Download failed: $_"

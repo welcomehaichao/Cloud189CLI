@@ -86,9 +86,9 @@ download_binary() {
     
     # 下载文件
     if command -v wget >/dev/null 2>&1; then
-        wget -q "$URL" -O "${BINARY_NAME}.tar.gz"
+        wget --show-progress "$URL" -O "${BINARY_NAME}.tar.gz"
     elif command -v curl >/dev/null 2>&1; then
-        curl -sL "$URL" -o "${BINARY_NAME}.tar.gz"
+        curl -L --progress-bar "$URL" -o "${BINARY_NAME}.tar.gz"
     else
         echo_error "wget or curl required"
         exit 1
