@@ -1,7 +1,7 @@
 .PHONY: build clean install test test-unit test-integration test-e2e test-all test-coverage test-bench test-clean
 
 BINARY_NAME=cloud189
-VERSION=1.5.0
+VERSION=1.6.0
 BUILD_DIR=./build
 
 build:
