@@ -1,0 +1,16 @@
+{
+  "test_config": {
+    "description": "Test configuration for integration tests",
+    "requirements": [
+      "Run 'cloud189 login' before running integration tests",
+      "Or set CLOUD189_USERNAME and CLOUD189_PASSWORD environment variables"
+    ]
+  },
+  "environment_variables": {
+    "CLOUD189_USERNAME": "Your username for login test",
+    "CLOUD189_PASSWORD": "Your password for login test",
+    "CLOUD189_TEST_CONFIG": "Path to config.json (optional)",
+    "CLOUD189_TEST_LOGGED_IN": "Set to 1 when logged in for E2E tests",
+    "CLOUD189_TEST_QR": "Set to 1 to test QR code login"
+  }
+}
