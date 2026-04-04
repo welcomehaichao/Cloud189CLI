@@ -13,87 +13,11 @@
 
 ## AI Agent 技能包
 
-本项目为 AI Agent 工具提供预配置的技能包，让 AI 助手能够直接操作天翼云盘。
+本项目提供开箱即用的技能包，支持主流 AI Agent 工具（Claude Code、OpenCode、OpenClaw）。
 
-### 下载技能包
+从 [GitHub Releases](https://github.com/welcomehaichao/Cloud189CLI/releases) 下载 `cloud189.skill.zip`，解压到对应工具的技能目录即可使用。
 
-从 [GitHub Releases](https://github.com/welcomehaichao/Cloud189CLI/releases) 下载 `cloud189.skill.zip`。
-
-### 在 Agent 工具中使用
-
-#### Claude Code
-
-Claude Code 是 Anthropic 官方的 AI 编程助手工具。
-
-```bash
-# 1. 下载技能包
-wget https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189.skill.zip
-
-# 2. 解压到 Claude Code 技能目录
-unzip cloud189.skill.zip -d ~/.claude/skills/
-
-# 3. 重启 Claude Code 或重新加载配置
-# 技能将自动加载，AI 可以直接使用 cloud189 命令
-```
-
-#### OpenCode
-
-OpenCode 是开源的 AI 编程助手。
-
-```bash
-# 1. 下载技能包
-wget https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189.skill.zip
-
-# 2. 解压到 OpenCode 技能目录
-unzip cloud189.skill.zip -d ~/.config/opencode/skills/
-
-# 3. 重启 OpenCode
-# 在对话中提到"天翼云盘"或相关操作时，AI 会自动使用此技能
-```
-
-#### OpenClaw
-
-OpenClaw 是另一个流行的 AI Agent 工具。
-
-```bash
-# 1. 下载技能包
-wget https://github.com/welcomehaichao/Cloud189CLI/releases/latest/download/cloud189.skill.zip
-
-# 2. 解压到 OpenClaw 技能目录
-unzip cloud189.skill.zip -d ~/.openclaw/skills/
-
-# 3. 重启 OpenClaw
-# AI 助手将能够识别并执行天翼云盘相关操作
-```
-
-### 技能包内容
-
-技能包包含以下内容：
-
-```
-cloud189/
-├── SKILL.md                    # 技能主文件（触发规则和使用指南）
-└── references/                 # 参考文档
-    ├── commands.md             # 详细命令参考
-    ├── output-structures.md    # JSON 输出结构说明
-    └── error-handling.md       # 错误处理指南
-```
-
-### 技能触发场景
-
-当用户提到以下关键词时，AI Agent 会自动触发此技能：
-
-- **云盘名称**: 天翼云盘、Cloud189、cloud189、189云盘、电信云盘
-- **操作需求**: 上传/下载文件、创建分享链接、查看容量、操作家庭云
-- **特定场景**: "把文件发给我"、"上传并给我链接"、"发送这个文件"、"给我下载链接"
-
-### 技能功能
-
-- ✅ 自动识别天翼云盘相关请求
-- ✅ 智能选择合适的命令执行
-- ✅ 解析 JSON 输出并提取关键信息
-- ✅ 错误处理和重试机制
-- ✅ 支持大文件断点续传
+详细使用指南请查看：**[AI Agent 技能包使用指南](docs/AI-Agent-Skills.md)**
 
 ## 安装
 
