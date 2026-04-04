@@ -154,8 +154,93 @@ function Verify-Installation {
     }
 }
 
+# 下载并安装 skill
+function Download-And-Install-Skill {
+    param($targetDir)
+    
+    $skillUrl = "https://github.com/$Repo/releases/latest/download/cloud189.skill.zip"
+    $tmpDir = Join-Path $env:TEMP "cloud189-skill-download"
+    $skillZip = Join-Path $tmpDir "cloud189.skill.zip"
+    
+    New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
+    
+    Write-Info "下载技能包..."
+    
+    try {
+        Invoke-WebRequest -Uri $skillUrl -OutFile $skillZip
+        Write-Info "下载完成"
+    } catch {
+        Write-Warn "下载失败: $_"
+        Remove-Item -Path $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+        return $false
+    }
+    
+    Write-Info "安装技能包..."
+    
+    if (-not (Test-Path $targetDir)) {
+        New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+    }
+    
+    try {
+        Expand-Archive -Path $skillZip -DestinationPath $targetDir -Force
+        Write-Info "✓ Skill 已安装到: $targetDir\cloud189"
+        Write-Info "请重启 Agent 工具"
+        Remove-Item -Path $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+        return $true
+    } catch {
+        Write-Warn "解压失败: $_"
+        Remove-Item -Path $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+        return $false
+    }
+}
+
+# 检测并自动安装 AI Agent skill
+function Install-Skill {
+    Write-Info "检测 AI Agent 工具..."
+    
+    $agentDirs = @(
+        Join-Path $env:USERPROFILE ".claude\skills"
+        Join-Path $env:APPDATA "opencode\skills"
+        Join-Path $env:USERPROFILE ".openclaw\skills"
+    )
+    
+    $installedCount = 0
+    
+    foreach ($agentDir in $agentDirs) {
+        if (Test-Path $agentDir) {
+            $agentName = Split-Path (Split-Path $agentDir) -Leaf
+            
+            Write-Info "发现 $agentName 工具"
+            
+            $skillPath = Join-Path $agentDir "cloud189"
+            
+            if (Test-Path $skillPath) {
+                Write-Info "cloud189 skill 已存在，跳过"
+                continue
+            }
+            
+            # 自动安装（无需询问）
+            if (Download-And-Install-Skill $agentDir) {
+                $installedCount++
+            }
+        fi
+    }
+    
+    if ($installedCount -gt 0) {
+        Write-Info "✓ 已为 $installedCount 个 Agent 工具安装 skill"
+    } else {
+        Write-Info "未检测到 AI Agent 工具"
+        Write-Info "如需手动安装，请从 GitHub Release 下载 cloud189.skill.zip"
+    }
+}
+
 # 主流程
 Write-Info "Starting cloud189 CLI installation..."
 
 Add-ToPath
 Verify-Installation
+
+# 自动安装 AI Agent skill（无需询问）
+Install-Skill
+
+Write-Info "Installation completed!"

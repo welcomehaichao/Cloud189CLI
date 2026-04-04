@@ -3,7 +3,7 @@ package main
 import "github.com/yuhaichao/cloud189-cli/internal/commands"
 
 var (
-	Version   = "v1.6.0"
+	Version   = "v1.7.0"
 	BuildTime = "unknown"
 )
 

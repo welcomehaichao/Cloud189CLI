@@ -174,6 +174,85 @@ verify_installation() {
     fi
 }
 
+# 下载并安装 skill
+download_and_install_skill() {
+    local target_dir="$1"
+    local tmp_dir=$(mktemp -d)
+    local skill_zip="$tmp_dir/cloud189.skill.zip"
+    local skill_url="https://github.com/${REPO}/releases/latest/download/cloud189.skill.zip"
+    
+    echo_info "下载技能包..."
+    
+    if command -v wget >/dev/null 2>&1; then
+        wget --show-progress "$skill_url" -O "$skill_zip" || {
+            echo_warn "下载失败"
+            rm -rf "$tmp_dir"
+            return 1
+        }
+    elif command -v curl >/dev/null 2>&1; then
+        curl -L --progress-bar "$skill_url" -o "$skill_zip" || {
+            echo_warn "下载失败"
+            rm -rf "$tmp_dir"
+            return 1
+        }
+    fi
+    
+    echo_info "安装技能包..."
+    
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -q "$skill_zip" -d "$target_dir"
+    elif command -v python3 >/dev/null 2>&1; then
+        python3 -m zipfile -e "$skill_zip" "$target_dir"
+    else
+        echo_warn "需要 unzip 或 python3 来解压 zip 文件"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+    
+    rm -rf "$tmp_dir"
+    echo_info "✓ Skill 已安装到: $target_dir/cloud189"
+    echo_info "请重启 Agent 工具"
+    return 0
+}
+
+# 检测并自动安装 AI Agent skill
+install_skill() {
+    echo_info "检测 AI Agent 工具..."
+    
+    local agent_dirs=(
+        "$HOME/.claude/skills"
+        "$HOME/.config/opencode/skills"
+        "$HOME/.openclaw/skills"
+    )
+    
+    local installed_count=0
+    
+    for agent_dir in "${agent_dirs[@]}"; do
+        if [ -d "$agent_dir" ]; then
+            local agent_name=$(basename $(dirname "$agent_dir"))
+            echo_info "发现 ${agent_name} 工具"
+            
+            # 检查是否已存在
+            if [ -d "$agent_dir/cloud189" ]; then
+                echo_info "cloud189 skill 已存在，跳过"
+                continue
+            fi
+            
+            # 自动安装（无需询问）
+            if download_and_install_skill "$agent_dir"; then
+                installed_count=$((installed_count + 1))
+            fi
+        fi
+    done
+    
+    if [ $installed_count -gt 0 ]; then
+        echo_info "✓ 已为 $installed_count 个 Agent 工具安装 skill"
+    else
+        echo_info "未检测到 AI Agent 工具"
+        echo_info "如需手动安装，请从 GitHub Release 下载 cloud189.skill.zip"
+    fi
+}
+
 # 主流程
 main() {
     echo_info "Starting cloud189 CLI installation..."
@@ -183,6 +262,11 @@ main() {
     download_binary
     install_binary
     verify_installation
+    
+    # 自动安装 AI Agent skill（无需询问）
+    install_skill
+    
+    echo_info "Installation completed!"
 }
 
 main
