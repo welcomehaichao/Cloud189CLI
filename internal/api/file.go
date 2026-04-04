@@ -1187,7 +1187,15 @@ func (c *Client) UploadFile(ctx context.Context, localPath, cloudPath string, pr
 
 	uploadUrl := uploadInfo.FileUploadUrl
 	if !strings.HasPrefix(uploadUrl, "http") {
-		uploadUrl = "https:" + uploadUrl
+		if strings.HasPrefix(uploadUrl, "//") {
+			uploadUrl = "https:" + uploadUrl
+		} else if strings.HasPrefix(uploadUrl, "/") {
+			uploadUrl = "https://upload.cloud.189.cn" + uploadUrl
+		} else if uploadUrl != "" {
+			uploadUrl = "https://upload.cloud.189.cn/" + uploadUrl
+		} else {
+			return nil, fmt.Errorf("empty upload URL received from API")
+		}
 	}
 
 	headers := map[string]string{
