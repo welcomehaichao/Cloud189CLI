@@ -399,7 +399,7 @@ func (c *Client) LoginByQRCode() (*types.Session, error) {
 }
 
 func printQRCode(content string) error {
-	qr, err := qrcode.New(content, qrcode.High)
+	qr, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {
 		return err
 	}
@@ -407,38 +407,34 @@ func printQRCode(content string) error {
 	bitmap := qr.Bitmap()
 	size := len(bitmap)
 
-	black := "██"
-	white := "  "
-
-	border := 2
+	border := 1
 
 	for i := 0; i < border; i++ {
-		line := ""
-		for j := 0; j < size+2*border; j++ {
-			line += white
-		}
-		fmt.Println(line)
+		fmt.Println(strings.Repeat(" ", size+2*border))
 	}
 
-	for y := 0; y < size; y++ {
-		line := strings.Repeat(white, border)
+	for y := 0; y < size; y += 2 {
+		line := strings.Repeat(" ", border)
 		for x := 0; x < size; x++ {
-			if bitmap[y][x] {
-				line += black
+			upper := y < size && bitmap[y][x]
+			lower := y+1 < size && bitmap[y+1][x]
+
+			if upper && lower {
+				line += "█"
+			} else if upper {
+				line += "▀"
+			} else if lower {
+				line += "▄"
 			} else {
-				line += white
+				line += " "
 			}
 		}
-		line += strings.Repeat(white, border)
+		line += strings.Repeat(" ", border)
 		fmt.Println(line)
 	}
 
 	for i := 0; i < border; i++ {
-		line := ""
-		for j := 0; j < size+2*border; j++ {
-			line += white
-		}
-		fmt.Println(line)
+		fmt.Println(strings.Repeat(" ", size+2*border))
 	}
 
 	return nil
